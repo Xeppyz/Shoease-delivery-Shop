@@ -1,35 +1,81 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/basic.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shoes/src/utils/my_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
+
 }
 
 class _LoginPageState extends State<LoginPage> {
 
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Container(
         width: double.infinity,
-        child: Column(
+        child: Stack(
           children: [
-            _imageBanner(),
-            _textFieldEmail(),
-            _textFieldPass(),
-            _buttonLogin(),
-            _textFielDontHaveAccount()
+            Positioned(
+                top: -80,
+                left: -100,
+                child: _circleLogin()
+            ),
+            Positioned(
+                top: 60.0,
+                left: 25.0,
+                child: _textLogin()
+            ),
+            Column(
+              children: [
+
+                _imageBanner(),
+                _textFieldEmail(),
+                _textFieldPass(),
+                _buttonLogin(),
+                _textFielDontHaveAccount()
 
 
+              ],
+            ),
           ],
         ),
       )
     );
   }
 
+
+  Widget _textLogin(){
+    return Text(
+      'LOGIN',
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 25.0
+      ),
+    );
+  }
+
+  Widget _circleLogin(){
+    return Container(
+      width: 240.0,
+      height: 230.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100.0),
+        color: MyColors.primaryColor
+      ),
+    );
+  }
 
   Widget _textFielDontHaveAccount(){
     return Row(
@@ -49,26 +95,64 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _imageBanner(){
-    return Image.asset('assets/img/DeliverySho.png',
-        width: 200.0,
-        height: 200.0
+    final double screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      margin: EdgeInsets.only(
+          top: 100,
+          bottom: screenHeight * 0.20
+      ),
+      child: Image.asset('assets/img/DeliverySho.png',
+          width: 200.0,
+          height: 200.0
+      ),
     );
-
   }
 
   Widget _textFieldEmail(){
-    return TextField(
-      decoration:InputDecoration(
-          hintText: 'Email'
-      ) ,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+      decoration: BoxDecoration(
+        color: MyColors.primaryOpacityColor,
+            borderRadius: BorderRadius.circular(50.0)
+      ),
+      child: TextField(
+        decoration:InputDecoration(
+            hintText: 'Email',
+                hintStyle: TextStyle(
+                  color: MyColors.primaryDark
+                ),
+                border: InputBorder.none,
+          contentPadding: EdgeInsets.all(15.0),
+          prefixIcon: Icon(
+              Icons.email,
+            color: MyColors.primaryColor,
+          )
+        ) ,
+      ),
     );
   }
 
   Widget _textFieldPass(){
-    return TextField(
-      decoration:InputDecoration(
-          hintText: 'Contraseña'
-      ) ,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+      decoration: BoxDecoration(
+          color: MyColors.primaryOpacityColor,
+          borderRadius: BorderRadius.circular(50.0)
+      ),
+      child: TextField(
+        decoration:InputDecoration(
+            hintText: 'Contraseña',
+            hintStyle: TextStyle(
+                color: MyColors.primaryDark
+            ),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.all(15.0),
+            prefixIcon: Icon(
+              Icons.lock,
+              color: MyColors.primaryColor,
+            )
+        ) ,
+      ),
     );
   }
 

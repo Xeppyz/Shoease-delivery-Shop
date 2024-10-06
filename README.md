@@ -1,6 +1,6 @@
 # shoes
 
-Shop of shoes
+E-commerce of delivery app shoease
 
 ## Getting Started
 
