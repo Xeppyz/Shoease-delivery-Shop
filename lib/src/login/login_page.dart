@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shoes/src/utils/my_colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,33 +23,35 @@ class _LoginPageState extends State<LoginPage> {
 
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        child: Stack(
-          children: [
-            Positioned(
-                top: -80,
-                left: -100,
-                child: _circleLogin()
-            ),
-            Positioned(
-                top: 60.0,
-                left: 25.0,
-                child: _textLogin()
-            ),
-            Column(
-              children: [
-
-                _imageBanner(),
-                _textFieldEmail(),
-                _textFieldPass(),
-                _buttonLogin(),
-                _textFielDontHaveAccount()
-
-
-              ],
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          child: Stack(
+            children: [
+              Positioned(
+                  top: -80,
+                  left: -100,
+                  child: _circleLogin()
+              ),
+              Positioned(
+                  top: 60.0,
+                  left: 25.0,
+                  child: _textLogin()
+              ),
+              Column(
+                children: [
+                  _lottiAnimation(),
+                  //_imageBanner(),
+                  _textFieldEmail(),
+                  _textFieldPass(),
+                  _buttonLogin(),
+                  _textFielDontHaveAccount()
+        
+        
+                ],
+              ),
+            ],
+          ),
         ),
       )
     );
@@ -94,6 +97,23 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget _lottiAnimation(){
+    final double screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      margin: EdgeInsets.only(
+          top: 150,
+          bottom: screenHeight * 0.17
+      ),
+      child: Lottie.asset(
+          'assets/json/delivery.json',
+          width:  350,
+          height: 200,
+        fit: BoxFit.fill
+      ),
+    );
+  }
+
+  //This widget was used before
   Widget _imageBanner(){
     final double screenHeight = MediaQuery.of(context).size.height;
     return Container(
@@ -166,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Text(
               'Ingresar',
             style: TextStyle(
-              color: Colors.black
+              color: MyColors.primaryDark
             ),
           ),
           style: ElevatedButton.styleFrom(
