@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shoes/src/utils/my_colors.dart';
+
+import 'login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +19,18 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  LoginController _con = new LoginController();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    //Con esto evitamos que nos salte el null operator del controlador
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +60,8 @@ class _LoginPageState extends State<LoginPage> {
                   _textFieldPass(),
                   _buttonLogin(),
                   _textFielDontHaveAccount()
-        
-        
+
+
                 ],
               ),
             ],
@@ -64,7 +78,9 @@ class _LoginPageState extends State<LoginPage> {
       style: TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.bold,
-        fontSize: 25.0
+        fontSize: 25.0,
+        fontFamily: 'NimbusSans',
+
       ),
     );
   }
@@ -86,11 +102,14 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         Text('¿No tienes cuenta?'),
         SizedBox(width: 7.0,),
-        Text(
-          'Registrate',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            // color: MyColors.primaryColor
+        GestureDetector(
+          onTap: _con.goToRegisterPage,
+          child: Text(
+            'Registrate',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              // color: MyColors.primaryColor
+            ),
           ),
         )
       ],
@@ -136,6 +155,8 @@ class _LoginPageState extends State<LoginPage> {
             borderRadius: BorderRadius.circular(50.0)
       ),
       child: TextField(
+        controller: _con.emailController,
+        keyboardType: TextInputType.emailAddress,
         decoration:InputDecoration(
             hintText: 'Email',
                 hintStyle: TextStyle(
@@ -160,6 +181,8 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(50.0)
       ),
       child: TextField(
+        controller: _con.passwordController,
+        obscureText: true,
         decoration:InputDecoration(
             hintText: 'Contraseña',
             hintStyle: TextStyle(
@@ -181,8 +204,7 @@ class _LoginPageState extends State<LoginPage> {
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
       child: ElevatedButton(
-          onPressed: (){
-          },
+          onPressed: _con.login,
           child: Text(
               'Ingresar',
             style: TextStyle(
