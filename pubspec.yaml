@@ -36,6 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   lottie: ^3.1.2
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +69,14 @@ flutter:
     - assets/img/ # An image asset can refer to one or more resolution-specific "variants", see
     - assets/json/
 
-  # https://flutter.dev/assets-and-images/#resolution-aware
+  fonts:
+    - family: NimbusSans
+      fonts:
+        - asset: assets/fonts/NimbusSans/NimbusSanL-Reg.otf
+
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Medium.ttf # https://flutter.dev/assets-and-images/#resolution-aware
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
