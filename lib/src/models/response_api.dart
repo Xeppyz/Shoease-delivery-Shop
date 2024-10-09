@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+ResponseApi responseApiFromJson(String str) => ResponseApi.fromJson(json.decode(str));
+
+String responseApiToJson(ResponseApi data) => json.encode(data.toJson());
+
 class ResponseApi {
-  String? message;
-  String? error;
-  bool? success;
+   String? message;
+   String? error;
+   bool? success;
   dynamic data;
 
   ResponseApi({
@@ -11,12 +17,17 @@ class ResponseApi {
     this.data,
   });
 
-  factory ResponseApi.fromJson(Map<String, dynamic> json) => ResponseApi(
-    message: json["message"] as String?,
-    error: json["error"] as String?,
-    success: json["success"] as bool?,
-    data: json["data"],
-  );
+  ResponseApi.fromJson(Map<String, dynamic> json) {
+    message = json["message"] ?? '';
+    error = json["error"] ?? '';
+    success = json["success"] ?? false;
+
+    try {
+      data = json['data'] ?? {};
+    } catch (e) {
+      print('Exception data $e');
+    }
+  }
 
   Map<String, dynamic> toJson() => {
     "message": message,
