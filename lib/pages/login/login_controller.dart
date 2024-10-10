@@ -1,5 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shoes/src/models/response_api.dart';
+import 'package:shoes/src/provider/users_provider.dart';
+import 'package:shoes/src/utils/my_snackbar.dart';
+import 'package:shoes/src/utils/shared_pref.dart';
+
+import '../../src/models/user.dart';
 
 class LoginController{
   //NULL SAFETY
@@ -7,8 +13,19 @@ class LoginController{
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
 
-  Future? init(BuildContext context){
+  UsersProvider usersProvider = new UsersProvider();
+  SharedPref _sharedPref = new SharedPref();
+
+  Future? init(BuildContext context) async{
     this.context = context;
+    await usersProvider.init(context);
+
+    User user = User.fromJson(await _sharedPref.read('user') ?? {});
+    print('Usuario: ${user.toJson()}');
+
+    if(user?.sessionToken !=null){
+      Navigator.pushNamedAndRemoveUntil(context, 'cliente/products/list', (route) => false);
+    }
 
   }
   
@@ -16,12 +33,23 @@ class LoginController{
     Navigator.pushNamed(context!, 'register');
   }
 
-  void login(){
+  void login() async{
     String email = emailController.text.trim();
     String pw = passwordController.text.trim();
+    
+    ResponseApi? responseApi = await usersProvider.login(email, pw);
+    print('Respuesta: ${responseApi?.toJson()}');
+    if(responseApi!.success){
+      User user = User.fromJson(responseApi.data);
+      _sharedPref.save('user', user.toJson());
+      //Eliminar el historial de pantallas anteriores navegadas
+      Navigator.pushNamedAndRemoveUntil(context!, 'cliente/products/list', (route) => false);
+    }
+    else{
+      MySnackBar.show(context!, responseApi?.message);
 
-    print("Email ${email}");
-    print("Email ${pw}");
+    }
+
   }
 
 }
