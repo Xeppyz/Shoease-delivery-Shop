@@ -7,13 +7,13 @@ String responseApiToJson(ResponseApi data) => json.encode(data.toJson());
 class ResponseApi {
    String? message;
    String? error;
-   bool? success;
+  late bool success;
   dynamic data;
 
   ResponseApi({
     this.message,
     this.error,
-    this.success,
+    required this.success,
     this.data,
   });
 

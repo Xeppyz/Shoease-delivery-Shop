@@ -37,7 +37,9 @@ class _LoginPageState extends State<LoginPage> {
 
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
+
         child: Container(
           width: double.infinity,
           child: Stack(
