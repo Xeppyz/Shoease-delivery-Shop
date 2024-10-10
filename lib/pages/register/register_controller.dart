@@ -28,7 +28,7 @@ class RegisterController{
 
   }
 
-  void register() async{
+  void register() async {
     String email = emailController.text..trim();
     String name = nameController.text..trim();
     String lastName = lastNameController.text..trim();
@@ -37,38 +37,40 @@ class RegisterController{
     String pwConfirm = pwConfirmController.text..trim();
 
 
-    if(email.isEmpty || name.isEmpty || lastName.isEmpty || number.isEmpty || number.isEmpty || pw.isEmpty || pwConfirm.isEmpty){
+    if (email.isEmpty || name.isEmpty || lastName.isEmpty || number.isEmpty ||
+        number.isEmpty || pw.isEmpty || pwConfirm.isEmpty) {
       MySnackBar.show(context!, 'Debes ingresar todos los campos');
       return;
     }
 
-    if(pwConfirm != pw){
+    if (pwConfirm != pw) {
       MySnackBar.show(context!, 'Las contraseñas no coinciden');
       return;
     }
 
-    if(pw.length < 6){
-      MySnackBar.show(context!, 'La contraseña debe de tener al menos 6 digitos');
+    if (pw.length < 6) {
+      MySnackBar.show(
+          context!, 'La contraseña debe de tener al menos 6 digitos');
       return;
     }
     User user = new User(
-      email: email,
-      name: name,
-      lastname: lastName,
-      phone: number,
-      pw: pw
+        email: email,
+        name: name,
+        lastname: lastName,
+        phone: number,
+        pw: pw
     );
 
     ResponseApi? responseApi = await usersProvider.create(user);
 
     MySnackBar.show(context!, responseApi?.message);
 
+    if(responseApi!.success){
+        Future.delayed(Duration(seconds: 3),(){
+            Navigator.pushReplacementNamed(context!, 'login');
+        });
+    }
+
     print('RESPUESTA: ${responseApi?.toJson()}');
-    print("Email ${email}");
-    print("Name ${name}");
-    print("Name ${lastName}");
-    print("Name ${number}");
-    print("Name ${pwConfirm}");
-    print("pw ${pw}");
   }
 }

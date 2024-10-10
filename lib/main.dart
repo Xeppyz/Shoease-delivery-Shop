@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shoes/pages/business/orders/list/business_orders_list_page.dart';
 import 'package:shoes/pages/client/products/list/client_products_list_controller.dart';
 import 'package:shoes/pages/client/products/list/client_products_list_page.dart';
+import 'package:shoes/pages/delivery/orders/list/delivery_orders_list_page.dart';
 import 'package:shoes/pages/login/login_page.dart';
 import 'package:shoes/pages/register/register_page.dart';
+import 'package:shoes/pages/roles/roles_page.dart';
 import 'package:shoes/src/utils/my_colors.dart';
 
 void main() {
@@ -26,7 +29,10 @@ class _MyAppState extends State<MyApp> {
       routes: {
         'login' : (BuildContext context) => LoginPage(),
         'register' : (BuildContext context) => RegisterPage(),
-        'cliente/products/list' : (BuildContext context) => ClienteProductsListPage(),
+        'roles' : (BuildContext context) => RolesPage(),
+        'client/products/list' : (BuildContext context) => ClienteProductsListPage(),
+        'business/orders/list' : (BuildContext context) => BusinessOrdersListPage(),
+        'delivery/orders/list' : (BuildContext context) => DeliveryOrdersListPage(),
       },
       theme: ThemeData(
        // fontFamily: 'NimbusSans',
