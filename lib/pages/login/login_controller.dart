@@ -24,7 +24,14 @@ class LoginController{
     print('Usuario: ${user.toJson()}');
 
     if(user?.sessionToken !=null){
-      Navigator.pushNamedAndRemoveUntil(context, 'client/products/list', (route) => false);
+      if(user.roles!.length > 1) {
+        //Eliminar el historial de pantallas anteriores navegadas
+        Navigator.pushNamedAndRemoveUntil(context!, 'roles', (route) => false);
+      }
+      else{
+        //Eliminar el historial de pantallas anteriores navegadas
+        Navigator.pushNamedAndRemoveUntil(context!, user.roles![0].route!, (route) => false);
+      }
     }
 
   }
