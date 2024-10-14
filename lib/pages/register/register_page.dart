@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import  'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -18,18 +19,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    // TODO: implement initState  
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      _con.init(context);
+      _con.init(context, refresh);
     });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-      width: double.infinity,
+        width: double.infinity,
         child: Stack(
           children: [
             Positioned(
@@ -74,10 +75,15 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _imageUser(){
-    return CircleAvatar(
-      backgroundImage: AssetImage('assets/img/user_profile_2.png'),
-      radius: 60,
-      backgroundColor: Colors.grey[400],
+    return GestureDetector(
+      onTap: _con.showAlertDialog,
+      child: CircleAvatar(
+        backgroundImage: _con.imageFile != null
+            ? FileImage(_con.imageFile!) as ImageProvider<Object>
+            : AssetImage('assets/img/user_profile_2.png') as ImageProvider<Object>,
+        radius: 60,
+        backgroundColor: Colors.grey[400],
+      ),
     );
   }
 
@@ -245,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
       child: ElevatedButton(
-        onPressed: _con.register,
+        onPressed:_con.isEnable ? _con.register : null,
         child: Text(
           'Ingresar',
           style: TextStyle(
@@ -277,5 +283,11 @@ class _RegisterPageState extends State<RegisterPage> {
         fontFamily: 'NimbusSans',
       ),
     );
+  }
+
+  void refresh(){
+     setState(() {
+
+     });
   }
 }

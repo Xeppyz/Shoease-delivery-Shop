@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "385188939153",
+    "project_id": "shoeaseapp",
+    "storage_bucket": "shoeaseapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385188939153:android:d6ec6629daf69405f9c630",
+        "android_client_info": {
+          "package_name": "com.shoes.shoes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCujG7BT_9macCNULd67z4i_hF5jjjm_nA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

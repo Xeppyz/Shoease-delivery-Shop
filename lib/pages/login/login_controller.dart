@@ -21,7 +21,7 @@ class LoginController{
     await usersProvider.init(context);
 
     User user = User.fromJson(await _sharedPref.read('user') ?? {});
-    print('Usuario: ${user.toJson()}');
+    print('Usuario Obtenido: ${user.toJson()}');
 
     if(user?.sessionToken !=null){
       if(user.roles!.length > 1) {

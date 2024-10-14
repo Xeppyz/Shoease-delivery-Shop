@@ -99,23 +99,24 @@ class _ClienteProductsListPageState extends State<ClienteProductsListPage> {
                   ),
                   maxLines: 1,
                 ),
-                Container(
-                  height: 60.0,
-                  margin: EdgeInsets.only(top: 5.0),
+                ClipOval(
                   child: FadeInImage(
                     image: _con.user?.image != null
                         ? NetworkImage(_con.user!.image!) as ImageProvider<Object>
                         : AssetImage('assets/img/no-image.png') as ImageProvider<Object>,
-
-                    fit: BoxFit.contain,
-                    fadeInDuration: Duration(milliseconds: 50),
                     placeholder: AssetImage('assets/img/no-image.png'),
+                    fit: BoxFit.cover,
+                    fadeInDuration: Duration(milliseconds: 50),
+                    width: 65.0,
+                    height: 65.0,
                   ),
                 )
+
               ],
             ),
             ),
           ListTile(
+            onTap: _con.goToUpdateProfile,
             title: Text('Editar Perfil'),
             trailing: Icon(Icons.edit),
           ),
