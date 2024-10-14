@@ -3,23 +3,25 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoes/src/models/response_api.dart';
 import 'package:shoes/src/provider/users_provider.dart';
 import 'package:shoes/src/utils/my_colors.dart';
 import 'package:shoes/src/utils/my_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shoes/src/utils/shared_pref.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
-import '../../src/models/user.dart';
 
-class RegisterController{
+import '../../../src/models/user.dart';
+
+class ClientUpdateController{
 
   BuildContext? context;
-  TextEditingController emailController = new TextEditingController();
+
   TextEditingController nameController = new TextEditingController();
   TextEditingController lastNameController = new TextEditingController();
   TextEditingController numberController = new TextEditingController();
-  TextEditingController pwController = new TextEditingController();
-  TextEditingController pwConfirmController = new TextEditingController();
+
 
   UsersProvider usersProvider = new UsersProvider();
 
@@ -30,13 +32,22 @@ class RegisterController{
   ProgressDialog? _progressDialog;
 
   bool isEnable = true;
+  User? user;
+  SharedPref _sharedPref = new SharedPref();
 
-  Future? init(BuildContext context, Function refresh){
+  Future? init(BuildContext context, Function refresh) async {
     this.context = context;
     this.refresh = refresh;
 
     usersProvider.init(context);
     _progressDialog = ProgressDialog(context: context);
+    user = User.fromJson(await _sharedPref.read('user'));
+   
+    nameController.text = user!.name!;
+    lastNameController.text = user!.lastname!;
+    numberController.text = user!.phone!;
+
+    refresh();
   }
 
   void goBack(){
@@ -44,69 +55,48 @@ class RegisterController{
 
   }
 
-  void register() async {
-    String email = emailController.text..trim();
+  void update() async {
+
     String name = nameController.text..trim();
     String lastName = lastNameController.text..trim();
     String number = numberController.text..trim();
-    String pw = pwController.text..trim();
-    String pwConfirm = pwConfirmController.text..trim();
 
 
-    if (email.isEmpty || name.isEmpty || lastName.isEmpty || number.isEmpty ||
-        number.isEmpty || pw.isEmpty || pwConfirm.isEmpty) {
-      MySnackBar.show(context!, 'Debes ingresar todos los campos');
-      return;
-    }
-
-    if (pwConfirm != pw) {
-      MySnackBar.show(context!, 'Las contraseñas no coinciden');
-      return;
-    }
-
-    if (pw.length < 6) {
-      MySnackBar.show(
-          context!, 'La contraseña debe de tener al menos 6 digitos');
-      return;
-    }
-
-    if(imageFile == null){
-      MySnackBar.show(context!, 'Selecciona una imagen');
-      return;
-    }
 
     _progressDialog?.show(
-      max: 100,
-      msg: 'Espere un momento...',
-      borderRadius: 10
+        max: 100,
+        msg: 'Espere un momento...',
+        borderRadius: 10
 
 
     );
     isEnable = false;
 
-
-
-    User user = new User(
-        email: email,
+    User myUser = new User(
+        id: user?.id,
         name: name,
         lastname: lastName,
         phone: number,
-        pw: pw
+        image: user?.image
+
+
     );
 
-    Stream? stream = await usersProvider.createWithImage(user, imageFile!);
-    stream?.listen((res)  {
-      
+    Stream? stream = await usersProvider.update(myUser, imageFile!);
+    stream?.listen((res)  async {
+
       _progressDialog?.close();
-     // ResponseApi? responseApi = await usersProvider.create(user);
+      // ResponseApi? responseApi = await usersProvider.create(user);
       ResponseApi? responseApi = ResponseApi.fromJson(json.decode(res));
       print('RESPUESTA: ${responseApi?.toJson()}');
-      MySnackBar.show(context!, responseApi?.message);
+      Fluttertoast.showToast(msg: responseApi.message!);
 
       if(responseApi!.success){
-        Future.delayed(Duration(seconds: 3),(){
-          Navigator.pushReplacementNamed(context!, 'login');
-        });
+        user = await usersProvider.getById(myUser.id!); //getting user
+        print('USUARIO OBTENIDO: ${user!.toJson()}');
+        _sharedPref.save('user', user!.toJson());
+        Navigator.pushNamedAndRemoveUntil(context!, 'client/products/list', (route) => false);
+
       }
       else{
         isEnable = true;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shoes/pages/business/orders/list/business_orders_list_page.dart';
 import 'package:shoes/pages/client/products/list/client_products_list_controller.dart';
 import 'package:shoes/pages/client/products/list/client_products_list_page.dart';
+import 'package:shoes/pages/client/update/client_update_page.dart';
 import 'package:shoes/pages/delivery/orders/list/delivery_orders_list_page.dart';
 import 'package:shoes/pages/login/login_page.dart';
 import 'package:shoes/pages/register/register_page.dart';
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
         'register' : (BuildContext context) => RegisterPage(),
         'roles' : (BuildContext context) => RolesPage(),
         'client/products/list' : (BuildContext context) => ClienteProductsListPage(),
+        'client/update' : (BuildContext context) => ClientUpdatePage(),
         'business/orders/list' : (BuildContext context) => BusinessOrdersListPage(),
         'delivery/orders/list' : (BuildContext context) => DeliveryOrdersListPage(),
       },

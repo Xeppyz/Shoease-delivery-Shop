@@ -31,6 +31,10 @@ class ClienteProductsListController{
   void openDrawer(){
     key.currentState!.openDrawer();
   }
+
+  void goToUpdateProfile(){
+    Navigator.pushNamed(context!, 'client/update');
+  }
   
   void goToRoles(){
     Navigator.pushNamedAndRemoveUntil(context!, 'roles', (route) => false);

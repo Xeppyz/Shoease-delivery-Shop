@@ -1,5 +1,5 @@
 class Environment{
 
-  static const String API_SHOEASE = "192.168.1.19:3000";
+  static const String API_SHOEASE = "192.168.3.39:3000";
 
 }
