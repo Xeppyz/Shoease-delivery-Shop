@@ -65,7 +65,6 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-
                   '${_con.user?.name ?? ''} ${_con.user?.lastname ?? ''}',
                   style: TextStyle(
                       fontSize: 18.0,
@@ -96,21 +95,26 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
                   ),
                   maxLines: 1,
                 ),
-                Container(
-                  height: 60.0,
-                  margin: EdgeInsets.only(top: 5.0),
+                ClipOval(
                   child: FadeInImage(
                     image: _con.user?.image != null
                         ? NetworkImage(_con.user!.image!) as ImageProvider<Object>
                         : AssetImage('assets/img/no-image.png') as ImageProvider<Object>,
-
-                    fit: BoxFit.contain,
-                    fadeInDuration: Duration(milliseconds: 50),
                     placeholder: AssetImage('assets/img/no-image.png'),
+                    fit: BoxFit.cover,
+                    fadeInDuration: Duration(milliseconds: 50),
+                    width: 65.0,
+                    height: 65.0,
                   ),
                 )
               ],
             ),
+          ),
+          ListTile(
+            onTap: _con.goToCategeoryCreate,
+            title: Text('Crear categoria'),
+            trailing: Icon(Icons.add_business_rounded),
+
           ),
           _con.user != null ?
           _con.user!.roles!.length > 1 ?

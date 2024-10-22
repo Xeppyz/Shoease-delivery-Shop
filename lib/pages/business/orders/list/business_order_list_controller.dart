@@ -22,7 +22,11 @@ class BusinnesOrderListController{
   }
 
   void logout(){
-    _sharedPref.logout(context!);
+    _sharedPref.logout(context!, user!.id!);
+  }
+
+  void goToCategeoryCreate(){
+    Navigator.pushNamed(context!, 'business/categories/create');
   }
 
   void openDrawer(){
