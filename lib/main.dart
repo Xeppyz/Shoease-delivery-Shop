@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoes/pages/business/categories/create/business_categories_create_page.dart';
 import 'package:shoes/pages/business/orders/list/business_orders_list_page.dart';
+import 'package:shoes/pages/business/products/create/business_products_create_page.dart';
 import 'package:shoes/pages/client/products/list/client_products_list_controller.dart';
 import 'package:shoes/pages/client/products/list/client_products_list_page.dart';
 import 'package:shoes/pages/client/update/client_update_page.dart';
@@ -35,8 +36,10 @@ class _MyAppState extends State<MyApp> {
         'client/products/list' : (BuildContext context) => ClienteProductsListPage(),
         'client/update' : (BuildContext context) => ClientUpdatePage(),
         'business/orders/list' : (BuildContext context) => BusinessOrdersListPage(),
+        'business/categories/create' : (BuildContext context) => BusinessCategoriesCreatePage(),
+        'business/products/create' : (BuildContext context) => BusinessProductsCreatePage(),
         'delivery/orders/list' : (BuildContext context) => DeliveryOrdersListPage(),
-        'business/categories/create' : (BuildContext context) => BusinessCategoriesCreatePage()
+
       },
       theme: ThemeData(
         primaryColor: MyColors.primaryColor,

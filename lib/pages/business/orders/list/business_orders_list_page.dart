@@ -116,6 +116,12 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
             trailing: Icon(Icons.add_business_rounded),
 
           ),
+          ListTile(
+            onTap: _con.goToProductsCreate,
+            title: Text('Crear producto'),
+            trailing: Icon(Icons.add_circle),
+
+          ),
           _con.user != null ?
           _con.user!.roles!.length > 1 ?
           ListTile(
