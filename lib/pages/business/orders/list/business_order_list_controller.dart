@@ -29,6 +29,11 @@ class BusinnesOrderListController{
     Navigator.pushNamed(context!, 'business/categories/create');
   }
 
+  void goToProductsCreate(){
+    Navigator.pushNamed(context!, 'business/products/create');
+  }
+
+
   void openDrawer(){
     key.currentState!.openDrawer();
   }
