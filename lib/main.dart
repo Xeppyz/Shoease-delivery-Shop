@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primaryColor: MyColors.primaryColor,
         appBarTheme: AppBarTheme(
-          color: MyColors.primaryColor,
+          elevation: 0.0
         ),
       ),
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -11,8 +12,10 @@ import 'package:shoes/src/models/category.dart';
 import 'package:shoes/src/models/product.dart';
 import 'package:shoes/src/models/response_api.dart';
 import 'package:shoes/src/provider/categories_provider.dart';
+import 'package:shoes/src/provider/products_provider.dart';
 import 'package:shoes/src/utils/my_snackbar.dart';
 import 'package:shoes/src/utils/shared_pref.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 
 import '../../../../src/models/user.dart';
 
@@ -29,17 +32,20 @@ class BusinessProductsCreateController{
   TextEditingController descriptionController = new TextEditingController();
   TextEditingController priceController = TextEditingController(); // Usa TextEditingController
   CategoriesProvider _categoriesProvider = new CategoriesProvider();
+  ProductsProvider _productsProvider = new ProductsProvider();
   User? user;
   SharedPref sharedPref = new SharedPref();
   List<Category> categories = [];
   String? idCategory;// Save ID category
 
-
+  ProgressDialog? _progressDialog;
   Future? init(BuildContext context, Function refresh) async{
     this.context = context;
     this.refresh = refresh;
+    _progressDialog = new ProgressDialog(context: context);
     user = User.fromJson(await sharedPref.read('user'));
     this._categoriesProvider.init(context, user!);
+    _productsProvider.init(context, user!);
 
     getCategories();
   }
@@ -83,6 +89,24 @@ class BusinessProductsCreateController{
         idCategory: int.parse(idCategory!),
 
     );
+    List<File> images = [];
+
+    images.add(imageFile1!);
+    images.add(imageFile2!);
+    images.add(imageFile3!);
+
+    //Mostrar el dialog antes que comience el inicio del proceso
+    _progressDialog?.show(max: 100, msg: 'Registrando producto..');
+    Stream? stream = await _productsProvider.create(product, images);
+    stream?.listen((res) {
+      //Una vez recibamos respuesta mandamos a cerrarlo
+      _progressDialog!.close();
+
+      ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
+      
+      MySnackBar.show(context!, responseApi.message);
+      
+    });
 
     print("formulario Producto ${product.toJson()}");
 
@@ -93,6 +117,16 @@ class BusinessProductsCreateController{
 
     }
 
+    void resetValuesForm(){
+    nameController.text = '';
+    descriptionController.text = '';
+    priceController.text = '0.0';
+    imageFile1 = null;
+    imageFile2 = null;
+    imageFile3 = null;
+    idCategory = null;
+    refresh!();
+    }
   Future selectImage(ImageSource imageSource, int numberFile) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile = await _picker.pickImage(source: imageSource);

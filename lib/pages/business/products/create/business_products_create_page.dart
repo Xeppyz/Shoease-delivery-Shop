@@ -171,7 +171,7 @@ class _BusinessProductsCreatePageState extends State<BusinessProductsCreatePage>
           height: 140.0,
           width: MediaQuery.of(context).size.width * 0.26,
           child: Image(
-            image: AssetImage('assets/img/add_image.png'),
+            image: AssetImage('assets/img/bag.png'),
           )
         ),
       ),
@@ -187,7 +187,7 @@ class _BusinessProductsCreatePageState extends State<BusinessProductsCreatePage>
 
         onPressed: _con.createProduct ,
         child: Text(
-          'Crear categoria',
+          'Registrar producto',
           style: TextStyle(
               color: MyColors.primaryDark
           ),
