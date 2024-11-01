@@ -29,53 +29,58 @@ class ClientAddressMapController {
 
   void onMapCreated(GoogleMapController controller) {
     _mapController.complete(controller);
-    animateCameraToPosition(_position!.latitude, _position!.longitude);
+    if (_position != null) {
+      animateCameraToPosition(_position!.latitude, _position!.longitude);
+    }
   }
 
   void checkGPS() async {
-    bool isLocationEnable = await Geolocator.isLocationServiceEnabled();
-    if(isLocationEnable){
+    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+    if (isLocationEnabled) {
       updateLocation();
-    }
-    else{
+    } else {
       bool locationGPS = await location.Location().requestService();
-      //bool locationGPS = false;
-
-      if(locationGPS){
+      if (locationGPS) {
         updateLocation();
       }
     }
+  }
 
+  void selectRefPoint() {
+    Map<String, dynamic> data = {
+      'address': addressName,
+      'lat': addressLatLng?.latitude,
+      'lng': addressLatLng?.longitude
+    };
+    Navigator.pop(context!, data);
   }
 
   Future<Null> setLocationDraggableInfo() async {
-    if(initialPosition != null){
+    if (initialPosition != null) {
       double lat = initialPosition.target.latitude;
       double lng = initialPosition.target.longitude;
 
       List<Placemark> address = await placemarkFromCoordinates(lat, lng);
 
-      if(address != null){
-        if(address.length > 0){
-          String? direction = address[0].thoroughfare;
-          String? street = address[0].subThoroughfare;
-          String? city = address[0].locality;
-          String? department = address[0].administrativeArea;
-          String? country = address[0].country;
-          addressName = '${direction} #${street}, $city, $department';
-          addressLatLng = new LatLng(lat, lng);
-
-          refresh!();
-
-
-        }
+      if (address.isNotEmpty) {
+        String? direction = address[0].thoroughfare;
+        String? street = address[0].subThoroughfare;
+        String? city = address[0].locality;
+        String? department = address[0].administrativeArea;
+        String? country = address[0].country;
+        addressName = '$direction #$street, $city, $department';
+        addressLatLng = LatLng(lat, lng);
+        refresh!();
       }
     }
   }
+
   void updateLocation() async {
     try {
-      await _determinePosition(); // got current position
-      _position = await Geolocator.getLastKnownPosition(); //lat and long
+      _position = await _determinePosition(); // Obtén la posición actual
+      if (_position != null) {
+        animateCameraToPosition(_position!.latitude, _position!.longitude);
+      }
     } catch (e) {
       print("Error: $e");
     }
@@ -83,33 +88,22 @@ class ClientAddressMapController {
 
   Future animateCameraToPosition(double lat, double lng) async {
     GoogleMapController controller = await _mapController.future;
-
-    if (controller != null) {
-      controller.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(
-              target: LatLng(lat, lng),
-              zoom: 13,
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(lat, lng),
+            zoom: 13,
             bearing: 0
-          )
-      )
-      );
-    }
+        )
+    ));
   }
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Test if location services are enabled.
+    // Verifica si los servicios de localización están habilitados.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
 
@@ -117,23 +111,17 @@ class ClientAddressMapController {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
+    // Cuando los permisos están concedidos, obtiene la posición del dispositivo.
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 }
+

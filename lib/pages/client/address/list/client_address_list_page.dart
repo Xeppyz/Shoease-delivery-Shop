@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shoes/pages/client/address/list/client_address_list_controller.dart';
+import 'package:shoes/src/models/address.dart';
 import 'package:shoes/src/utils/my_colors.dart';
 import 'package:shoes/src/widget/no_data_widget.dart';
 
@@ -31,19 +32,17 @@ class _ClientAddressListPageState extends State<ClientAddressListPage> {
           _iconAdd()
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        child: Column(
-          children: [
-            _textSelectAddress(),
-            Container(
-              margin: EdgeInsets.only(top: 30.0),
-                child: NoDataWidget(
-                    text: 'Agrega una nueva dirección')
-            ),
-            _buttonNewAddress()
-          ],
-        ),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+              child: _textSelectAddress()
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 50),
+              child: _listAddress()
+          )
+        ],
       ),
       bottomNavigationBar: _buttonAccept(),
     );
@@ -55,7 +54,6 @@ class _ClientAddressListPageState extends State<ClientAddressListPage> {
         icon: Icon(Icons.add_location_alt, color: MyColors.primaryColor)
     );
   }
-
   Widget _buttonAccept(){
     return Container(
       height: 50.0,
@@ -78,7 +76,7 @@ class _ClientAddressListPageState extends State<ClientAddressListPage> {
       ),
     );
   }
-   Widget _buttonNewAddress(){
+  Widget _buttonNewAddress(){
      return Container(
        height: 40.0,
 
@@ -106,6 +104,93 @@ class _ClientAddressListPageState extends State<ClientAddressListPage> {
         ),
       ),
     );
+  }
+
+  Widget _noAddress(){
+    return Column(
+      children: [
+        Container(
+            margin: EdgeInsets.only(top: 30.0),
+            child: NoDataWidget(
+                text: 'Agrega una nueva dirección')
+        ),
+        _buttonNewAddress()
+      ],
+    );
+
+  }
+
+  Widget _listAddress(){
+    return FutureBuilder(
+        future: _con.getAddress(),
+        builder: (context, AsyncSnapshot<List<AddressModel>>snapshot){
+
+          if(snapshot.hasData){
+            if(snapshot.data!.length > 0){
+              return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+
+                  itemCount: snapshot.data?.length ?? 0,
+                  itemBuilder: (_, index){
+                    return _radioSelectorAddress(snapshot.data![index], index);
+                  }
+              );
+            }
+            else{
+              print("loco");
+              return _noAddress();
+            }
+          }
+          else{
+            return _noAddress();
+          }
+
+        }
+    );
+  }
+
+  Widget _radioSelectorAddress(AddressModel addressModel, int index){
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Radio(
+                    value: (index),
+                    groupValue: _con.radioValue,
+                    onChanged: _con.handleRadioValueChange,
+                ),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      addressModel?.address ?? '',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    Text
+                      (
+                      addressModel?.neighborhood ?? '',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
+                ),
+
+              ],
+            ),
+            Divider(
+              color: Colors.grey[400],
+            )
+          ],
+        ),
+
+      );
   }
 
   void refresh(){

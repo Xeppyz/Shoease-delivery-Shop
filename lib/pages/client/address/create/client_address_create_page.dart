@@ -52,6 +52,7 @@ class _ClientAddressCreatePageState extends State<ClientAddressCreatePage> {
 
       margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
       child: TextField(
+        controller: _con.addressController,
         decoration: InputDecoration(
           labelText: 'Dirección',
           suffixIcon: Icon(
@@ -65,9 +66,9 @@ class _ClientAddressCreatePageState extends State<ClientAddressCreatePage> {
 
   Widget _textFieldNeighborhood(){
      return Container(
-
          margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
          child: TextField(
+           controller: _con.neighborhoodController,
            decoration: InputDecoration(
                labelText: 'Barrio',
                suffixIcon: Icon(
@@ -81,9 +82,9 @@ class _ClientAddressCreatePageState extends State<ClientAddressCreatePage> {
 
    Widget _textFieldRefPoint(){
      return Container(
-
          margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
          child: TextField(
+           controller: _con.refPointController,
            onTap: _con.openMap,
            autofocus: false,
            focusNode: AlwaysDisabledFocusNode(),
@@ -104,7 +105,7 @@ class _ClientAddressCreatePageState extends State<ClientAddressCreatePage> {
        width: double.infinity,
        margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 30.0),
        child: ElevatedButton(
-         onPressed: (){},
+         onPressed: _con.createAddress,
          child: Text(
            'CREAR DIRECCIÓN',
            style: TextStyle(
