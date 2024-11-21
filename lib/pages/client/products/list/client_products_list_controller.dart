@@ -40,6 +40,7 @@ class ClienteProductsListController{
   Future<List<Product>> getProducts (String idCategory) async {
       return await _productsProvider.getByCategory(idCategory);
   }
+
   void getCategories() async {
       categories = await _categoriesProvider.getAll();
       refresh!();
@@ -48,6 +49,7 @@ class ClienteProductsListController{
 
   void openBottomSheet(Product product){
     showMaterialModalBottomSheet(
+
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(10.0)

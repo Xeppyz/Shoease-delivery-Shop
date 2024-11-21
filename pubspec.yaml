@@ -50,6 +50,7 @@ dependencies:
   location: ^6.0.1
   geocoder_plus: ^0.0.1
   geocoding: ^3.0.0
+  intl: ^0.20.0
 
 
 

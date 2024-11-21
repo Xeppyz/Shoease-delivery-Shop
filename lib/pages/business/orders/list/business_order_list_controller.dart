@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:shoes/pages/business/orders/detail/business_orders_detail_page.dart';
+import 'package:shoes/src/models/order.dart';
+import 'package:shoes/src/provider/orders_provider.dart';
 import 'package:shoes/src/utils/shared_pref.dart';
 
 import '../../../../src/models/user.dart';
@@ -14,11 +18,39 @@ class BusinnesOrderListController{
   Function? refresh;
   User? user;
 
+
+  List<String> status = ['PAGADO', 'EMPACADO', 'EN CAMINO', 'ENTREGADO'];
+
+  OrdersProvider _ordersProvider = new OrdersProvider();
+  bool isUpdated = false;
+
   Future? init(BuildContext context, Function refresh) async{
     this.context = context;
     this.refresh = refresh;
     user = User.fromJson(await _sharedPref.read('user'));
+    _ordersProvider.init(context, user!);
     refresh();
+  }
+
+
+
+  void openBottomSheet(Order order) async {
+    if (context != null) {
+      isUpdated = await showMaterialModalBottomSheet(
+        context: context!,
+        builder: (context) => BusinessOrdersDetailPage(order: order),
+      );
+      if(isUpdated){
+          refresh!();
+      }
+    } else {
+      print('Contexto es nulo');
+    }
+  }
+
+
+  Future<List<Order>> getOrders (String status) async {
+    return await _ordersProvider.getByStatus(status);
   }
 
   void logout(){

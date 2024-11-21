@@ -41,6 +41,7 @@ class ProductsProvider{
            filename: basename(images[i].path)
        ));
      }
+
       request.fields['product'] = json.encode(product);
       final response = await request.send(); //SENT REQUEST NODE.JS
       return response.stream.transform(utf8.decoder);
@@ -59,7 +60,6 @@ class ProductsProvider{
         'Content-type': 'application/json',
         'Authorization': sessionUser!.sessionToken!
       };
-
 
       final res = await http.get(uri, headers: headers);
       if(res.statusCode == 401){

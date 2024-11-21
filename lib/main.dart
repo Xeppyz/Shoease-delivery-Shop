@@ -10,6 +10,7 @@ import 'package:shoes/pages/client/products/list/client_products_list_controller
 import 'package:shoes/pages/client/products/list/client_products_list_page.dart';
 import 'package:shoes/pages/client/update/client_update_page.dart';
 import 'package:shoes/pages/delivery/orders/list/delivery_orders_list_page.dart';
+import 'package:shoes/pages/delivery/orders/map/delivery_orders_map_page.dart';
 import 'package:shoes/pages/login/login_page.dart';
 import 'package:shoes/pages/register/register_page.dart';
 import 'package:shoes/pages/roles/roles_page.dart';
@@ -47,6 +48,7 @@ class _MyAppState extends State<MyApp> {
         'business/categories/create' : (BuildContext context) => BusinessCategoriesCreatePage(),
         'business/products/create' : (BuildContext context) => BusinessProductsCreatePage(),
         'delivery/orders/list' : (BuildContext context) => DeliveryOrdersListPage(),
+        'delivery/orders/map' : (BuildContext context) => DeliveryOrdersMapPage(),
 
       },
       theme: ThemeData(
