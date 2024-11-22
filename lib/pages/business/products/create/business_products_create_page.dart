@@ -50,9 +50,9 @@ class _BusinessProductsCreatePageState extends State<BusinessProductsCreatePage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _cardImage(null, 1),
-                  _cardImage(null, 2),
-                  _cardImage(null, 3),
+                  _cardImage(_con.imageFile1, 1),
+                  _cardImage(_con.imageFile2, 2),
+                  _cardImage(_con.imageFile3, 3),
                 ],
               ),
             ),
@@ -148,27 +148,32 @@ class _BusinessProductsCreatePageState extends State<BusinessProductsCreatePage>
   }
   //cards
   Widget _cardImage(File? imageFile, int numberFile){
-    return imageFile != null
-        ? Card(
-      elevation: 3.0,
-      child: Container(
-        height: 100.0,
-        width: MediaQuery.of(context).size.width * 0.26,
-        child: Image.file(
-          imageFile,
-          fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: (){
+        _con.showAlertDialog(numberFile);
+      },
+      child: imageFile != null
+          ? Card(
+        elevation: 3.0,
+        child: Container(
+          height: 100.0,
+          width: MediaQuery.of(context).size.width * 0.26,
+          child: Image.file(
+            imageFile,
+            fit: BoxFit.cover,
 
+          ),
         ),
-      ),
-    )
-        : Card(
-      elevation: 3.0,
-      child: Container(
-        height: 140.0,
-        width: MediaQuery.of(context).size.width * 0.26,
-        child: Image(
-          image: AssetImage('assets/img/add_image.png'),
-        )
+      )
+          : Card(
+        elevation: 3.0,
+        child: Container(
+          height: 140.0,
+          width: MediaQuery.of(context).size.width * 0.26,
+          child: Image(
+            image: AssetImage('assets/img/bag.png'),
+          )
+        ),
       ),
     );
   }
@@ -182,7 +187,7 @@ class _BusinessProductsCreatePageState extends State<BusinessProductsCreatePage>
 
         onPressed: _con.createProduct ,
         child: Text(
-          'Crear categoria',
+          'Registrar producto',
           style: TextStyle(
               color: MyColors.primaryDark
           ),
@@ -268,7 +273,8 @@ class _BusinessProductsCreatePageState extends State<BusinessProductsCreatePage>
         inputFormatters: [
           CurrencyInputFormatter(
             trailingSymbol: CurrencySymbols.DOLLAR_SIGN,
-            thousandSeparator: ThousandSeparator.Period,
+            thousandSeparator: ThousandSeparator.Comma, // Punto como separador de miles
+
 
           ),
         ],

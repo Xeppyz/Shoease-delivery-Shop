@@ -44,6 +44,36 @@ class UsersProvider {
   }
 
 
+
+  Future<List<User>> getDeliveryMen() async {
+    try {
+      Uri uri = Uri.http(_url, '$_api/findDeliveryMen');
+      Map<String, String> headers = {
+        'Content-type': 'application/json',
+        'Authorization': sessionUser!.sessionToken! // Esquema Bearer corregido
+      };
+
+      print("URL: ${uri} ");
+      final res = await http.get(uri, headers: headers);
+
+      if (res.statusCode == 401) {
+        Fluttertoast.showToast(msg: 'Tu sesión expiró');
+        SharedPref().logout(context!, sessionUser!.id!);
+      }
+
+      final data = json.decode(res.body);
+      User user = User.fromJsonList(data);
+      print("DATAAAA: ${data}");
+      return user.toList;
+
+
+    } catch (e) {
+      print('Error: $e');
+      return [];
+    }
+  }
+
+
   Future<Stream?> createWithImage(User user, File image) async{
         try{
           Uri uri = Uri.http(_url, '$_api/create');

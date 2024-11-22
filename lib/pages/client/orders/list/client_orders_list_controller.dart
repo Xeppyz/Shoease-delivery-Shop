@@ -9,9 +9,10 @@ import 'package:shoes/src/provider/orders_provider.dart';
 import 'package:shoes/src/utils/shared_pref.dart';
 
 import '../../../../src/models/user.dart';
+import '../detail/client_orders_detail_page.dart';
 
 
-class DeliveryOrdersListController{
+class ClientOrdersListController{
 
   BuildContext? context;
   SharedPref _sharedPref = new SharedPref();
@@ -20,7 +21,7 @@ class DeliveryOrdersListController{
   User? user;
 
 
-  List<String> status = ['EMPACADO', 'EN CAMINO', 'ENTREGADO'];
+  List<String> status = ['PAGADO','EMPACADO', 'EN CAMINO', 'ENTREGADO'];
 
   OrdersProvider _ordersProvider = new OrdersProvider();
   bool? isUpdated;
@@ -39,7 +40,7 @@ class DeliveryOrdersListController{
     if (context != null) {
       isUpdated = await showMaterialModalBottomSheet(
         context: context!,
-        builder: (context) => DeliveryOrdersDetailPage(order: order),
+        builder: (context) => ClientOrdersDetailPage(order: order),
       );
       if(isUpdated == true){
         refresh!();
@@ -51,7 +52,7 @@ class DeliveryOrdersListController{
 
 
   Future<List<Order>> getOrders (String status) async {
-    return await _ordersProvider.getDeliveryAndStatus(user!.id!,status);
+    return await _ordersProvider.getClientAndStatus(user!.id!,status);
   }
 
   void logout(){

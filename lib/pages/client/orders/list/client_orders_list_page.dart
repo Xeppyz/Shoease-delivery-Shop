@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shoes/pages/business/orders/list/business_order_list_controller.dart';
+import 'package:shoes/pages/delivery/orders/list/delivery_orders_list_controller.dart';
 import 'package:shoes/src/models/order.dart';
 
 import '../../../../src/utils/my_colors.dart';
 import '../../../../src/widget/no_data_widget.dart';
+import 'client_orders_list_controller.dart';
 
-class BusinessOrdersListPage extends StatefulWidget {
-  const BusinessOrdersListPage({super.key});
+class ClientOrdersListPage extends StatefulWidget {
+  const ClientOrdersListPage({super.key});
 
   @override
-  State<BusinessOrdersListPage> createState() => _BusinessOrdersListPageState();
+  State<ClientOrdersListPage> createState() => _ClientOrdersListPageState();
 }
 
-class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
-  BusinnesOrderListController _con = new BusinnesOrderListController();
+class _ClientOrdersListPageState extends State<ClientOrdersListPage> {
+  ClientOrdersListController _con = new ClientOrdersListController();
 
   @override
   void initState() {
@@ -34,19 +36,9 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(100.0),
             child: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.white,
-              flexibleSpace: Column(
-                children: [
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  _menuDrawer(),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                ],
-              ),
+              title: Text('Mis pedidos'),
+              backgroundColor: MyColors.primaryOpacityColor,
+
               bottom: TabBar(
                 indicatorColor: MyColors.primaryDark,
                 labelColor: Colors.black,
@@ -60,10 +52,9 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
               ),
             ),
           ),
-          drawer: _drawer(),
           body: TabBarView(
             children: _con.status.map((String status) {
-                 return FutureBuilder(
+              return FutureBuilder(
                   future: _con.getOrders(status),
                   builder: (context, AsyncSnapshot<List<Order>>snapshot){
 
@@ -135,22 +126,22 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
                 child: Column(
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                   Container(
-                     alignment: Alignment.centerLeft,
-                     margin: EdgeInsets.symmetric(vertical: 5),
-                     width: double.infinity,
-                     child: Text(
-                       'Pedido: ${order?.timestamp}',
-                       style: TextStyle(fontSize: 13),
-      
-                     ),
-                   ),
                     Container(
                       alignment: Alignment.centerLeft,
                       margin: EdgeInsets.symmetric(vertical: 5),
                       width: double.infinity,
                       child: Text(
-                        'Cliente: ${order?.client?.name ?? ''} ${order?.client?.lastname ?? ''}',
+                        'Pedido: ${order?.timestamp}',
+                        style: TextStyle(fontSize: 13),
+
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      width: double.infinity,
+                      child: Text(
+                        'Repartidor: ${order?.delivery?.name ?? 'Repartidor no asignado'} ${order?.delivery?.lastname ?? ''}',
                         style: TextStyle(fontSize: 13),
                         maxLines: 1,
                       ),
@@ -175,102 +166,6 @@ class _BusinessOrdersListPageState extends State<BusinessOrdersListPage> {
     );
   }
 
-  Widget _menuDrawer() {
-    return GestureDetector(
-      onTap: _con.openDrawer,
-      child: Container(
-        margin: EdgeInsets.only(left: 20.0),
-        alignment: Alignment.centerLeft,
-        child: Image.asset(
-          'assets/img/menu.png',
-          width: 20,
-          height: 20,
-        ),
-      ),
-    );
-  }
-
-  Widget _drawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: MyColors.primaryColor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${_con.user?.name ?? ''} ${_con.user?.lastname ?? ''}',
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                  maxLines: 1,
-                ),
-                Text(
-                  _con.user?.email ?? '',
-                  style: TextStyle(
-                      fontSize: 13.0,
-                      color: Colors.grey[300],
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic),
-                  maxLines: 1,
-                ),
-                Text(
-                  _con.user?.phone ?? '',
-                  style: TextStyle(
-                      fontSize: 13.0,
-                      color: Colors.grey[300],
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic),
-                  maxLines: 1,
-                ),
-                ClipOval(
-                  child: FadeInImage(
-                    image: _con.user?.image != null
-                        ? NetworkImage(_con.user!.image!)
-                            as ImageProvider<Object>
-                        : AssetImage('assets/img/no-image.png')
-                            as ImageProvider<Object>,
-                    placeholder: AssetImage('assets/img/no-image.png'),
-                    fit: BoxFit.cover,
-                    fadeInDuration: Duration(milliseconds: 50),
-                    width: 65.0,
-                    height: 65.0,
-                  ),
-                )
-              ],
-            ),
-          ),
-          ListTile(
-            onTap: _con.goToCategeoryCreate,
-            title: Text('Crear categoria'),
-            trailing: Icon(Icons.add_business_rounded),
-          ),
-          ListTile(
-            onTap: _con.goToProductsCreate,
-            title: Text('Crear producto'),
-            trailing: Icon(Icons.add_circle),
-          ),
-          _con.user != null
-              ? _con.user!.roles!.length > 1
-                  ? ListTile(
-                      onTap: _con.goToRoles,
-                      title: Text('Seleccionar rol'),
-                      trailing: Icon(Icons.person),
-                    )
-                  : Container()
-              : Container(),
-          ListTile(
-            onTap: _con.logout,
-            title: Text('Cerrar sesión'),
-            trailing: Icon(Icons.power_settings_new),
-          ),
-        ],
-      ),
-    );
-  }
 
   void refresh() {
     setState(() {});
