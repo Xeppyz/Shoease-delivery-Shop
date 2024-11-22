@@ -98,6 +98,30 @@ class OrdersProvider{
     }
   }
 
+  Future<ResponseApi?> updateToDelivered(Order order) async {
+    try {
+      Uri uri = Uri.http(_url, '$_api/updateToDelivered');
+      String bodyParams = json.encode(order);
+      print("URL $uri");
+
+      Map<String, String> headers = {
+        'Content-type': 'application/json',
+        'Authorization': sessionUser!.sessionToken!
+      };
+      final res = await http.put(uri, headers: headers, body: bodyParams);
+      if(res.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesión expirada');
+        new SharedPref().logout(context!, sessionUser!.id!);
+      }
+      final data = json.decode(res.body);
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    } catch (e) {
+      print("Error: $e");
+      return null;
+    }
+  }
+
   Future<List<Order>> getByStatus(String status) async {
     try {
       Uri uri = Uri.http(_url, '$_api/findByStatus/$status');
@@ -128,6 +152,34 @@ class OrdersProvider{
   Future<List<Order>> getDeliveryAndStatus(String idDelivery,String status) async {
     try {
       Uri uri = Uri.http(_url, '$_api/findByDeliveryAndStatus/$idDelivery/$status');
+      print("URL $uri");
+
+      Map<String, String> headers = {
+        'Content-type': 'application/json',
+        'Authorization': sessionUser!.sessionToken!
+      };
+
+
+      final res = await http.get(uri, headers: headers);
+      if(res.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesión expirada');
+        new SharedPref().logout(context!, sessionUser!.id!);
+      }
+      final data = json.decode(res.body); //CATEGORIES
+      Order order = Order.fromJsonList(data);
+      return order.toList;
+
+    }catch(e){
+      print("Error: ${e}");
+      return [];
+    }
+  }
+
+
+
+  Future<List<Order>> getClientAndStatus(String idClient,String status) async {
+    try {
+      Uri uri = Uri.http(_url, '$_api/findByClientAndStatus/$idClient/$status');
       print("URL $uri");
 
       Map<String, String> headers = {

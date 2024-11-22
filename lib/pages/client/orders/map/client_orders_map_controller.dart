@@ -22,7 +22,7 @@ import '../../../../src/api/environment.dart';
 import '../../../../src/models/response_api.dart';
 import '../../../../src/models/user.dart';
 
-class DeliveryOrdersMapController {
+class ClientOrdersMapController {
   BuildContext? context;
   Function? refresh;
   Position? _position;

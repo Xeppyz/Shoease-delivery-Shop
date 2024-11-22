@@ -11,19 +11,21 @@ import 'package:shoes/src/utils/relative_time_util.dart';
 import 'package:shoes/src/widget/no_data_widget.dart';
 import 'package:shoes/src/models/order.dart';
 import '../../../../src/models/product.dart';
+import 'client_orders_detail_controller.dart';
 
-class DeliveryOrdersDetailPage extends StatefulWidget {
+class ClientOrdersDetailPage extends StatefulWidget {
 
   Order? order;
 
-  DeliveryOrdersDetailPage({ Key? key, @required this.order }) : super(key: key);
+  ClientOrdersDetailPage({ Key? key, @required this.order }) : super(key: key);
 
   @override
-  State<DeliveryOrdersDetailPage> createState() => _DeliveryOrdersDetailPageState();
+  State<ClientOrdersDetailPage> createState() => _ClientOrdersDetailPageState();
 }
 
-class _DeliveryOrdersDetailPageState extends State<DeliveryOrdersDetailPage> {
-  DeliveryOrdersDetailController _con = new DeliveryOrdersDetailController();
+class _ClientOrdersDetailPageState extends State<ClientOrdersDetailPage> {
+
+  ClientOrdersDetailController _con = new ClientOrdersDetailController();
 
   @override
   void initState() {
@@ -60,12 +62,12 @@ class _DeliveryOrdersDetailPageState extends State<DeliveryOrdersDetailPage> {
                   indent: 30, //MARGEN LEFT
                 ),
                 SizedBox(height: 10,),
-                _textData('Cliente:', '${_con.order?.client?.name ?? ''} ${_con.order?.client?.lastname ?? '' }'),
+                _textData('Repartidor:', '${_con.order?.delivery?.name ?? 'No asignado'} ${_con.order?.delivery?.lastname ?? '' }'),
                 _textData('Entregar en:', '${_con.order?.address?.address ?? ''}'),
                 SizedBox(height: 8,),
                 _textData('Fecha pedido:', '${RelativeTimeUtil.getRelativeTime(_con.order?.timestamp ?? 0)}'),
                // _textTotalPrice(),
-                _con.order?.status != 'ENTREGADO'  ?  _buttonDefaultBag() : Container()
+                _con.order?.status == 'EN CAMINO'  ?  _buttonDefaultBag() : Container()
               ],
             ),
           ),
@@ -101,7 +103,7 @@ class _DeliveryOrdersDetailPageState extends State<DeliveryOrdersDetailPage> {
       child: ElevatedButton(
         onPressed: _con.updateOrder,
         style: ElevatedButton.styleFrom(
-          backgroundColor:  _con.order?.status == 'EMPACADO' ? Colors.blue : Colors.green,
+          backgroundColor: Colors.green,
             padding: EdgeInsets.symmetric(vertical: 5),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
         ),
@@ -113,7 +115,7 @@ class _DeliveryOrdersDetailPageState extends State<DeliveryOrdersDetailPage> {
                 height: 40.0,
                 alignment: Alignment.center,
                 child: Text(
-                _con.order?.status == 'EMPACADO'  ? 'Iniciar Entrega' : 'IR AL MAPA',
+                 'SEGUIR ENTREGA',
                   style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
