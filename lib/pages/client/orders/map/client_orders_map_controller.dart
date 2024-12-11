@@ -17,6 +17,7 @@ import 'package:shoes/src/utils/my_colors.dart';
 import 'package:shoes/src/utils/my_snackbar.dart';
 import 'package:shoes/src/utils/shared_pref.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../../../src/api/environment.dart';
 import '../../../../src/models/response_api.dart';
@@ -26,7 +27,6 @@ class ClientOrdersMapController {
   BuildContext? context;
   Function? refresh;
   Position? _position;
-  StreamSubscription? _positionStream;
   String? addressName;
   LatLng? addressLatLng;
 
@@ -45,7 +45,13 @@ class ClientOrdersMapController {
   User? user;
   SharedPref _sharedPref = new SharedPref();
   double? _distanceBetween;
+
+  IO.Socket? socket;
+
+
   OrdersProvider _ordersProvider = new OrdersProvider();
+
+
 
 
   Future? init(BuildContext context, Function refresh) async  {
@@ -57,11 +63,36 @@ class ClientOrdersMapController {
 
     deliveryMarker = await createMarkerFromAsset('assets/img/delivery2.png');
     homeMarker = await createMarkerFromAsset('assets/img/home.png');
+    socket = IO.io('http://${Environment.API_SHOEASE}/orders/delivery', <String, dynamic> {
+      'transports' : ['websocket'],
+      'autoConnect' : false
+    });
+    socket!.connect();
+    socket!.on('position/${order!.id}', (data) {
+      print("DATA EMITIDO DE CLIENT: ${data}");
 
-    print("ORDERN: ${order?.toJson()}");
+      addMarker('delivery',
+          data['lat'],
+          data['lng'],
+          'Delivery',
+          '',
+          deliveryMarker!);
+
+    });
+
+
+    print("ORDERRRR: ${order?.toJson()}");
 
     checkGPS();
 
+  }
+
+  void emitPosition(){
+    socket?.emit('position', {
+      'id_order' : order?.id,
+      'lat' : _position?.latitude,
+      'lng' : _position?.longitude
+    });
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -99,50 +130,6 @@ class ClientOrdersMapController {
     }
   }
 
-  void launchWaze() async {
-    var url = 'waze://?ll=${order?.address?.lat.toString()},${order?.address?.lng.toString()}';
-    var fallbackUrl =
-        'https://waze.com/ul?ll=${order?.address?.lat.toString()},${order?.address?.lng.toString()}&navigate=yes';
-    try {
-      bool launched =
-      await launch(url, forceSafariVC: false, forceWebView: false);
-      if (!launched) {
-        await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
-      }
-    } catch (e) {
-      await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
-    }
-  }
-
-  void launchGoogleMaps() async {
-    var url = 'google.navigation:q=${order?.address?.lat.toString()},${order?.address?.lng.toString()}';
-    var fallbackUrl =
-        'https://www.google.com/maps/search/?api=1&query=${order?.address?.lat.toString()},${order?.address?.lng.toString()}';
-    try {
-      bool launched =
-      await launch(url, forceSafariVC: false, forceWebView: false);
-      if (!launched) {
-        await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
-      }
-    } catch (e) {
-      await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
-    }
-  }
-
-  void updateOrder() async {
-
-    if(_distanceBetween! <= 200){
-      ResponseApi? responseApi = await _ordersProvider.updateToDelivered(order!);
-      Fluttertoast.showToast(msg: responseApi!.message!, toastLength: Toast.LENGTH_LONG);
-      if(responseApi.success){
-        Navigator.pushNamedAndRemoveUntil(context!, 'delivery/orders/list', (route) => false);
-      }
-    }else{
-      MySnackBar.show(context!, 'Debe de estar más cerca a la posición de entrega');
-    }
-
-
-  }
 
   Future<void> setPolylines(LatLng from, LatLng to) async {
       PointLatLng pointFrom = PointLatLng(from.latitude, from.longitude);
@@ -168,6 +155,7 @@ class ClientOrdersMapController {
       );
 
       polylines.add(polyline);
+
 
       refresh!();
 
@@ -224,35 +212,28 @@ class ClientOrdersMapController {
   }
 
   void dispose(){
-    _positionStream?.cancel();
+    socket?.disconnect();
   }
 
   void updateLocation() async {
     try {
-      _position = await _determinePosition(); // Obtén la posición actual
-      if (_position != null) {
-        animateCameraToPosition(_position!.latitude, _position!.longitude);
-        addMarker('delivery', _position!.latitude, _position!.longitude, 'Tu posición', '', deliveryMarker!);
+      animateCameraToPosition(order!.lat!, order!.lng!);
+
+      addMarker('delivery',
+          order!.lat!,
+          order!.lng!,
+          'Delivery',
+          '',
+          deliveryMarker!);
         addMarker('home', order?.address?.lat ?? 0.0, order?.address?.lng ?? 0.0, 'Lugar de entrega', '', homeMarker!);
 
-        LatLng from = new LatLng(_position?.latitude ?? 0.0, _position?.longitude ?? 0.0);
+        LatLng from = new LatLng(order?.lat ?? 0.0,   order?.lng ?? 0.0);
         LatLng to = new LatLng(order?.address?.lat ?? 0.0, order?.address?.lng ?? 0.0);
 
         setPolylines(from, to);
 
-        _positionStream = Geolocator.getPositionStream(
-          locationSettings: LocationSettings(
-            accuracy: LocationAccuracy.high,
-            distanceFilter: 1
-          )
-        ).listen((Position position) {
-          _position = position;
-          addMarker('delivery', _position!.latitude, _position!.longitude, 'Tu posición', '', deliveryMarker!);
-          animateCameraToPosition(_position?.latitude ?? 0.0, _position?.longitude ?? 0.0);
-          isCloseToDeliveryPosition();
-          refresh!();
-        });
-      }
+       refresh!();
+
     } catch (e) {
       print("Error: $e");
     }

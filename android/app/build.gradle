@@ -64,7 +64,8 @@ android {
 flutter {
     source '../..'
 }
-
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation 'androidx.fragment:fragment:1.5.7'
+    implementation platform('com.google.firebase:firebase-bom:33.4.0')
 }
+
