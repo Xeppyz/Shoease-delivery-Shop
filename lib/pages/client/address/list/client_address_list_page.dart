@@ -111,8 +111,10 @@ class _ClientAddressListPageState extends State<ClientAddressListPage> {
       children: [
         Container(
             margin: EdgeInsets.only(top: 30.0),
-            child: NoDataWidget(
-                text: 'Agrega una nueva dirección')
+            child: Center(
+              child: NoDataWidget(
+                  text: 'Agrega una nueva dirección'),
+            )
         ),
         _buttonNewAddress()
       ],

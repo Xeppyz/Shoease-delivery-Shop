@@ -37,7 +37,7 @@ class _ClientOrdersListPageState extends State<ClientOrdersListPage> {
             preferredSize: Size.fromHeight(100.0),
             child: AppBar(
               title: Text('Mis pedidos'),
-              backgroundColor: MyColors.primaryOpacityColor,
+              backgroundColor: MyColors.colorEFEFED,
 
               bottom: TabBar(
                 indicatorColor: MyColors.primaryDark,

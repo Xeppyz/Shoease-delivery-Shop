@@ -17,6 +17,7 @@ import 'package:shoes/src/utils/my_colors.dart';
 import 'package:shoes/src/utils/my_snackbar.dart';
 import 'package:shoes/src/utils/shared_pref.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../../../src/api/environment.dart';
 import '../../../../src/models/response_api.dart';
@@ -47,6 +48,7 @@ class DeliveryOrdersMapController {
   double? _distanceBetween;
   OrdersProvider _ordersProvider = new OrdersProvider();
 
+  IO.Socket? socket;
 
   Future? init(BuildContext context, Function refresh) async  {
     this.context = context;
@@ -57,6 +59,26 @@ class DeliveryOrdersMapController {
 
     deliveryMarker = await createMarkerFromAsset('assets/img/delivery2.png');
     homeMarker = await createMarkerFromAsset('assets/img/home.png');
+
+    socket = IO.io('http://${Environment.API_SHOEASE}/orders/delivery', <String, dynamic>{
+      'transports': ['websocket'], // Intenta usar solo websocket
+      'autoConnect': false, // Asegúrate de que se intente conectar automáticamente
+      'reconnection': true,
+    });
+
+    socket?.connect();
+
+    socket?.onConnect((_) {
+      print('Conectado al namespace correctamente.');
+    });
+
+    socket?.onConnectError((error) {
+      print('Error al conectar: $error');
+    });
+
+    socket?.onDisconnect((_) {
+      print('Socket desconectado');
+    });
 
     print("ORDERN: ${order?.toJson()}");
 
@@ -71,6 +93,12 @@ class DeliveryOrdersMapController {
     }
   }
 
+  void saveLocation() async {
+    order?.lat =_position?.latitude;
+    order?.lng =_position?.longitude;
+
+    await _ordersProvider.updateLatLng(order!);
+  }
   void call(){
     launch("tel://${order?.client?.phone}");
   }
@@ -187,6 +215,17 @@ class DeliveryOrdersMapController {
 
   }
 
+  void emitPosition(){
+    socket?.emit('position', {
+      'id_order' : order?.id,
+      'lat' : _position?.latitude,
+      'lng' : _position?.longitude
+    });
+  }
+
+
+
+
   void selectRefPoint() {
     Map<String, dynamic> data = {
       'address': addressName,
@@ -225,11 +264,14 @@ class DeliveryOrdersMapController {
 
   void dispose(){
     _positionStream?.cancel();
+    socket?.disconnect();
   }
 
   void updateLocation() async {
     try {
-      _position = await _determinePosition(); // Obtén la posición actual
+      _position = await _determinePosition();
+      saveLocation();
+      // Obtén la posición actual
       if (_position != null) {
         animateCameraToPosition(_position!.latitude, _position!.longitude);
         addMarker('delivery', _position!.latitude, _position!.longitude, 'Tu posición', '', deliveryMarker!);
@@ -250,6 +292,8 @@ class DeliveryOrdersMapController {
           addMarker('delivery', _position!.latitude, _position!.longitude, 'Tu posición', '', deliveryMarker!);
           animateCameraToPosition(_position?.latitude ?? 0.0, _position?.longitude ?? 0.0);
           isCloseToDeliveryPosition();
+          emitPosition();
+
           refresh!();
         });
       }

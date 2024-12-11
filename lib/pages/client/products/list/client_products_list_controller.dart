@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -24,6 +26,8 @@ class ClienteProductsListController{
   ProductsProvider _productsProvider = new ProductsProvider();
   List<Category> categories = [];
 
+  Timer? searchOnStoppedTyping;
+  String productName = '';
 
 
   Future? init(BuildContext context, Function refresh) async {
@@ -37,9 +41,35 @@ class ClienteProductsListController{
   }
 
 
-  Future<List<Product>> getProducts (String idCategory) async {
-      return await _productsProvider.getByCategory(idCategory);
+  void onChangeText(String text){
+    Duration duration = Duration(milliseconds: 800);
+
+    if(searchOnStoppedTyping != null){
+      searchOnStoppedTyping?.cancel();
+      refresh!();
+    }
+
+    searchOnStoppedTyping = new Timer(duration, (){
+      productName = text;
+
+      refresh!();
+      print("Text completo: ${productName}");
+    });
+
   }
+
+  Future<List<Product>> getProducts (String idCategory, String productName) async {
+
+    if(productName.isEmpty){
+      return await _productsProvider.getByCategory(idCategory);
+    }
+    else{
+      return await _productsProvider.getByCategoryAndProductName(idCategory, productName);
+    }
+  }
+
+
+
 
   void getCategories() async {
       categories = await _categoriesProvider.getAll();

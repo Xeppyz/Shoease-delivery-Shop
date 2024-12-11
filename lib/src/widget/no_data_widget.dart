@@ -10,13 +10,15 @@ class NoDataWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 100.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset('assets/img/no_items.png'),
-          Text(text)
-        ],
+      margin: EdgeInsets.only(bottom: 50.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/img/no_items.png'),
+            Text(text)
+          ],
+        ),
       ),
     );
   }

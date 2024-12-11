@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes/src/models/response_api.dart';
+import 'package:shoes/src/provider/push_notifications_provider.dart';
 import 'package:shoes/src/provider/users_provider.dart';
 import 'package:shoes/src/utils/my_snackbar.dart';
 import 'package:shoes/src/utils/shared_pref.dart';
@@ -16,6 +17,8 @@ class LoginController{
   UsersProvider usersProvider = new UsersProvider();
   SharedPref _sharedPref = new SharedPref();
 
+  PushNotificationsProvider pushNotificationsProvider = PushNotificationsProvider();
+
   Future? init(BuildContext context) async{
     this.context = context;
     await usersProvider.init(context);
@@ -24,6 +27,7 @@ class LoginController{
     print('Usuario Obtenido: ${user.toJson()}');
 
     if(user?.sessionToken !=null){
+      pushNotificationsProvider.saveToken(user, context!);
       if(user.roles!.length > 1) {
         //Eliminar el historial de pantallas anteriores navegadas
         Navigator.pushNamedAndRemoveUntil(context!, 'roles', (route) => false);
@@ -40,6 +44,8 @@ class LoginController{
     Navigator.pushNamed(context!, 'register');
   }
 
+
+
   void login() async{
     String email = emailController.text.trim();
     String pw = passwordController.text.trim();
@@ -49,6 +55,7 @@ class LoginController{
     if(responseApi!.success){
       User user = User.fromJson(responseApi.data);
       _sharedPref.save('user', user.toJson());
+      pushNotificationsProvider.saveToken(user, context!);
       print('Usuarios logeado: ${user.toJson()}');
       if(user.roles!.length > 1) {
         //Eliminar el historial de pantallas anteriores navegadas
